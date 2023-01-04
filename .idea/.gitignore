@@ -8,3 +8,6 @@
 /httpRequests/
 # Zeppelin ignored files
 /ZeppelinRemoteNotebooks/
+
+/target
+/.idea
