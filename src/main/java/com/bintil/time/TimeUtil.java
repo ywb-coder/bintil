@@ -1,12 +1,8 @@
 package com.bintil.time;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -59,20 +55,23 @@ public class TimeUtil {
      * @param resultType localDateTime,date,calendar
      */
     public static <T> T computeTime(int preOrNext, ChronoUnit chronoUnit, Class<T> resultType) {
-        if (resultType == LocalDateTime.class) {
-            return (T) LocalDateTime.now().plus(preOrNext, chronoUnit);
-        }
-        if (resultType == LocalDate.class) {
-            return (T) LocalDate.now().plus(preOrNext, chronoUnit);
-        }
-        if (resultType == Date.class) {
-            return (T) Date.from(LocalDateTime.now().plus(preOrNext, chronoUnit).atZone(ZoneId.systemDefault()).toInstant());
-        }
-        if (resultType == Calendar.class) {
-            return (T) GregorianCalendar.from(LocalDateTime.now().plus(preOrNext, chronoUnit).atZone(ZoneId.systemDefault()));
-        }
-        throw new RuntimeException("时间类型错误");
+        LocalDateTime localDateTime = LocalDateTime.now().plus(preOrNext, chronoUnit);
+        return convertTime(localDateTime, resultType);
     }
+
+    /**
+     * 按照输入的时间计算
+     *
+     * @param time       传入的时间
+     * @param preOrNext  -为前，+为后
+     * @param chronoUnit 单位
+     * @param resultType localDateTime,date,calendar
+     */
+    public static <T> T computeTime(Object time, int preOrNext, ChronoUnit chronoUnit, Class<T> resultType) {
+        LocalDateTime localDateTime = convertTime(time, LocalDateTime.class).plus(preOrNext, chronoUnit);
+        return convertTime(localDateTime, resultType);
+    }
+
 
     /**
      * 计算时间间隔
@@ -112,7 +111,7 @@ public class TimeUtil {
      *
      * @param time       时间 date,calendar,localDate,localDateTime
      * @param resultType 需要返回的类型
-     * @param <T>        返回类型
+     * @param <T>        返回类型 ， 如果不为时间类型，返回的就是传入time的类型
      */
     public static <T> T convertTime(Object time, Class<T> resultType) {
         if (time instanceof Date) {
@@ -161,20 +160,20 @@ public class TimeUtil {
     /**
      * 获取星期几或者在每年的索引
      *
-     * @param time 时间
-     * @param year 年份
-     * @param type 1:获取关于month的索引，2：获取关于年的索引
+     * @param time       时间
+     * @param year       年份
+     * @param chronoUnit 类型
      */
-    public static int getDayIdxOfWeekOrYear(Object time, int year, int type) {
+    public static int getDayIdxOfWeekOrYear(Object time, int year, ChronoUnit chronoUnit) {
 
         LocalDateTime localDateTime = convertTime(time, LocalDateTime.class);
         if (year > START_YEAR) {
             localDateTime = localDateTime.withYear(year);
         }
-        if (type == 1) {
+        if (chronoUnit == ChronoUnit.WEEKS) {
             return localDateTime.getDayOfWeek().getValue();
         }
-        if (type == 2) {
+        if (chronoUnit == ChronoUnit.YEARS) {
             return localDateTime.getDayOfYear();
         }
         throw new RuntimeException("出错");
@@ -184,21 +183,35 @@ public class TimeUtil {
     /**
      * 输入的时间是那个月的第几个星期
      *
-     * @param time 输入的时间
-     * @param year 年份
-     * @param type 1:获取关于month的索引，2：获取关于年的索引
+     * @param time       输入的时间
+     * @param year       年份
+     * @param chronoUnit 类型
      */
-    public static int getWeekIdxOfMonthOrYear(Object time, int year, int type) {
+    public static int getWeekIdxOfMonthOrYear(Object time, int year, ChronoUnit chronoUnit) {
         LocalDateTime localDateTime = convertTime(time, LocalDateTime.class);
         if (year > START_YEAR) {
             localDateTime = localDateTime.withYear(year);
         }
-        if (type == 1) {
+        if (chronoUnit == ChronoUnit.MONTHS) {
             return localDateTime.get(WeekFields.ISO.weekOfMonth());
         }
-        if (type == 2) {
+        if (chronoUnit == ChronoUnit.YEARS) {
             return localDateTime.get(WeekFields.ISO.weekOfYear());
         }
         throw new RuntimeException("参数错误");
+    }
+
+    /**
+     * 时区转换时间
+     *
+     * @param time       时间
+     * @param timeZone   GMT时区
+     * @param resultType 返回类型
+     * @param <T>        返回
+     */
+    public static <T> T timeZoneConvert(Object time, String timeZone, Class<T> resultType) {
+        return convertTime(LocalDateTime.ofInstant(convertTime(time, Date.class).toInstant(),
+                        ZoneId.of(timeZone)),
+                resultType);
     }
 }
