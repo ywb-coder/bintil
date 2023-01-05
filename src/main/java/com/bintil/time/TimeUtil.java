@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
  */
 @SuppressWarnings({"unused", "unchecked"})
 public class TimeUtil {
-    private final static int START_YEAR = 1997;
+    private final static int START_YEAR = LocalDateTime.MIN.getYear();
 
     /**
      * 获取当前日期

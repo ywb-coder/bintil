@@ -11,6 +11,9 @@ import java.security.SecureRandom;
 @SuppressWarnings("all")
 public class AESUtils {
 
+    /**
+     * 可自行修改
+     */
     private static final String key = "@#^$&!*()hnsbtx2020";
 
     private static Cipher init(int cipherType) throws Exception {
