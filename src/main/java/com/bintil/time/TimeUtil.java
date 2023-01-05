@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -84,7 +85,26 @@ public class TimeUtil {
     public static long computeTimeInterval(Object start, Object end, ChronoUnit chronoUnit) {
         LocalDateTime startTime = convertTime(start, LocalDateTime.class);
         LocalDateTime endTime = convertTime(end, LocalDateTime.class);
-        return Duration.between(startTime, endTime).get(chronoUnit);
+        Duration between = Duration.ZERO;
+        if (chronoUnit.getDuration().getSeconds() < ChronoUnit.MONTHS.getDuration().getSeconds()) {
+            between = Duration.between(startTime, endTime);
+        }
+        switch (chronoUnit) {
+            case MINUTES:
+                return between.toMinutes();
+            case SECONDS:
+                return between.getSeconds();
+            case HOURS:
+                return between.toHours();
+            case DAYS:
+                return between.toDays();
+            case MONTHS:
+                return endTime.getMonthValue() - startTime.getMonthValue();
+            case YEARS:
+                return endTime.getYear() - startTime.getYear();
+            default:
+                return -1;
+        }
     }
 
     /**
