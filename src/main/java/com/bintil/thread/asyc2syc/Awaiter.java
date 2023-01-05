@@ -20,6 +20,7 @@ public class Awaiter {
         this.key = key;
     }
 
+    @Deprecated
     public Object await() {
         try {
             countDownLatch.await();
