@@ -7,5 +7,6 @@ package com.bintil;
 public class BinTilException extends RuntimeException {
     public BinTilException(String message) {
         super(message);
+
     }
 }
