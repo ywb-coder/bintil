@@ -1,5 +1,8 @@
 package com.bintil.asserts;
 
+import com.bintil.BinTilException;
+import com.bintil.BinTillExceptionConstants;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
@@ -19,23 +22,19 @@ public class AssertUtil {
      * @param exception  RuntimeException以及所有自定义子类
      */
     public static void isTure(boolean expression, RuntimeException exception) {
-        if (expression) {
+        if (!expression) {
             throw exception;
         }
     }
 
     /**
-     * 是否属于
+     * 真断言
      *
-     * @param superType 父类型
-     * @param subType   子类型
-     * @param exception RuntimeException以及所有自定义子类
+     * @param expression 表达式 ： 2 == 2
      */
-    public static void isInstanceOf(Class<?> superType, Class<?> subType, RuntimeException exception) {
-        isEmpty(superType, exception);
-        isEmpty(subType, exception);
-        if (subType != superType) {
-            throw exception;
+    public static void isTure(boolean expression) throws BinTilException {
+        if (!expression) {
+            throw new BinTilException(BinTillExceptionConstants.assertTure);
         }
     }
 
@@ -49,7 +48,7 @@ public class AssertUtil {
         if (object == null) {
             throw exception;
         } else if (object instanceof Optional) {
-            if (!((Optional<?>) object).isPresent()) {
+            if (((Optional<?>) object).isEmpty()) {
                 throw exception;
             }
         } else if (object instanceof CharSequence) {

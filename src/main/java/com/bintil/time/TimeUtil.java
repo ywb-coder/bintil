@@ -88,22 +88,15 @@ public class TimeUtil {
         if (chronoUnit.getDuration().getSeconds() < ChronoUnit.MONTHS.getDuration().getSeconds()) {
             between = Duration.between(startTime, endTime);
         }
-        switch (chronoUnit) {
-            case MINUTES:
-                return between.toMinutes();
-            case SECONDS:
-                return between.getSeconds();
-            case HOURS:
-                return between.toHours();
-            case DAYS:
-                return between.toDays();
-            case MONTHS:
-                return endTime.getMonthValue() - startTime.getMonthValue();
-            case YEARS:
-                return endTime.getYear() - startTime.getYear();
-            default:
-                return -1;
-        }
+        return switch (chronoUnit) {
+            case MINUTES -> between.toMinutes();
+            case SECONDS -> between.getSeconds();
+            case HOURS -> between.toHours();
+            case DAYS -> between.toDays();
+            case MONTHS -> endTime.getMonthValue() - startTime.getMonthValue();
+            case YEARS -> endTime.getYear() - startTime.getYear();
+            default -> -1;
+        };
     }
 
     /**

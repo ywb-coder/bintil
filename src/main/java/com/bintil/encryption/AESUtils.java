@@ -14,7 +14,7 @@ public class AESUtils {
     /**
      * 可自行修改
      */
-    private static final String key = "@#^$&!*()hnsbtx2020";
+    public static String key = "@#^$&!*()hnsbtx2020";
 
     private static Cipher init(int cipherType) throws Exception {
         KeyGenerator kgen = KeyGenerator.getInstance("AES");
@@ -54,7 +54,7 @@ public class AESUtils {
      *
      * @param content 待解密内容
      */
-    public String decrypt(String content) throws Exception {
+    public static String decrypt(String content) throws Exception {
         if (content.length() < 1) {
             return null;
         }
